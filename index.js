@@ -2,6 +2,9 @@ const { Telegraf } = require("telegraf");
 const axios = require("axios");
 require("dotenv").config();
 
+const http = require("http");
+
+// -- BOT
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const CATEGORIAS_COMPRA = [
@@ -56,7 +59,15 @@ bot.on("text", async (ctx) => {
   const category = CATEGORIAS_COMPRA.filter((i) => i === message)[0];
 
   if (category) {
+    if (!last_compra.value) {
+      ctx.reply(
+        "🟠 Digite o valor da sua compra, e SÓ então clique na categoria"
+      );
+      ctx.reply("▶ Para mais informações mande /help");
+    }
+
     const response = await APPEND_GOOGLE({ ...last_compra, category });
+    last_compra = {};
 
     if (response.err) {
       ctx.reply("❌  Tivemos um erro ao registrar a compra🙁  ❌");
@@ -109,3 +120,15 @@ bot.on("text", async (ctx) => {
 });
 
 bot.launch();
+
+// SERVER to output
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader("Content-type", "application/json");
+  res.write(JSON.stringify({ "Aqui habita": "Um bot do telegram" }));
+  res.end();
+});
+
+server.listen(process.env.PORT, () => {
+  console.log(`Servidor rodando na porta ${process.env.PORT}`);
+});

@@ -19,7 +19,7 @@ const CATEGORIAS_COMPRA = [
   "📚 Livro",
 ];
 
-const last_compra = {};
+let last_compra = {};
 
 async function APPEND_GOOGLE(body) {
   const retorno = { err: null };
@@ -64,6 +64,7 @@ bot.on("text", async (ctx) => {
         "🟠 Digite o valor da sua compra, e SÓ então clique na categoria"
       );
       ctx.reply("▶ Para mais informações mande /help");
+      return;
     }
 
     const response = await APPEND_GOOGLE({ ...last_compra, category });

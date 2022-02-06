@@ -8,6 +8,7 @@ const http = require("http");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const CATEGORIAS_COMPRA = [
+  "🛒 Mercado",
   "😋 Comida",
   "👔 Vestuario",
   "✨ Lazer",
@@ -15,8 +16,8 @@ const CATEGORIAS_COMPRA = [
   "🩸 Saude",
   "💔 Besteira",
   "💻 Eletrônicos",
-  "💸 Emprestimos",
   "📚 Livro",
+  "💸 Emprestimos",
 ];
 
 let last_compra = {};

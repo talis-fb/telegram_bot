@@ -1,45 +1,39 @@
-const { Telegraf } = require("telegraf");
-const axios = require("axios");
-require("dotenv").config();
+import { Telegraf } from "telegraf";
+import axios from "axios";
 
-const http = require("http");
+import * as dotenv from "dotenv";
+dotenv.config();
+
+import http from "http";
+
+//types
+import { compra, categoria } from './types'
 
 // -- BOT
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(process.env.BOT_TOKEN || "");
 
-const CATEGORIAS_COMPRA = [
-  "🛒 Mercado",
-  "😋 Comida",
-  "👔 Vestuario",
-  "✨ Lazer",
-  "🏠 Casa",
-  "🩸 Saude",
-  "💔 Besteira",
-  "💻 Eletrônicos",
-  "📚 Livro",
-  "💸 Emprestimos",
-];
+let last_compra:compra = {};
+const CATEGORIAS_COMPRA:Array<categoria> = ['📚 Livro']
 
-let last_compra = {};
-
-async function APPEND_GOOGLE(body) {
+async function APPEND_GOOGLE(body: compra) {
   const retorno = { err: null };
+  const URL_GOOGLE_SHEET = process.env.GOOGLE_SHEETS_URL || "";
 
   try {
-    const request = await axios.post(process.env.GOOGLE_SHEETS_URL, body);
+    const request = await axios.post(URL_GOOGLE_SHEET, body);
 
     if (request.status == 200) {
       console.log(`Compra no valor de ${body.value} Feita com sucesso`);
     }
     return retorno;
-  } catch (err) {
+  } catch (err:any) {
     retorno.err = err;
     return retorno;
   }
 }
 
 bot.start((ctx) => {
-  ctx.reply("Bem-vindo ao");
+  ctx.reply("Bem-vindo ao Tio Patinhas Curioso, aqui você coloca as suas compras :)");
 });
 
 bot.help((ctx) => {
@@ -69,7 +63,7 @@ bot.on("text", async (ctx) => {
     }
 
     const response = await APPEND_GOOGLE({ ...last_compra, category });
-    last_compra = {};
+    last_compra = {}
 
     if (response.err) {
       ctx.reply("❌  Tivemos um erro ao registrar a compra🙁  ❌");

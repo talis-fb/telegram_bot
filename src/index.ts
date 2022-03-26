@@ -9,6 +9,8 @@ import http from "http";
 //types
 import { compra, categoria } from './types'
 
+import { Spreadsheet } from './model'
+
 // -- BOT
 const bot = new Telegraf(process.env.BOT_TOKEN || "");
 
@@ -40,6 +42,11 @@ bot.help((ctx) => {
   ctx.reply(
     "Para registrar uma compra basta enviar o valor da sua compra, logo em seguida será solicitado a categoria dela, clicando basta esperar o Ok que ocorreu tudo certo 😄"
   );
+
+  // Fins de testes
+  Spreadsheet()
+  .then((aaa)=> aaa.values.append({ range: 'TarefasFechadas', valueInputOption: 'RAW', resource: { values: [ [ 'foi pedida uma ajuda' ] ] } }))
+  .catch( (err)=> console.log(err) )
 });
 
 bot.command("categorias", (ctx) => {

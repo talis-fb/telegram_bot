@@ -1,7 +1,5 @@
-import { google } from 'googleapis'
+import { google, sheets_v4 } from 'googleapis'
 import { GoogleAuth } from 'google-auth-library'
-// import { sheets } from 'googleapis/build/src/apis/sheets';
-// import axios from 'axios'
 require('dotenv').config()
 
 const auth = new GoogleAuth({
@@ -15,22 +13,19 @@ const Spreadsheet = async () => {
   const sheet = google.sheets({ version: 'v4', auth: client })
   const model = sheet.spreadsheets.values
 
-  interface paramsWrite {
-    range: string
-    valueInputOption: 'INPUT_VALUE_OPTION_UNSPECIFIED' | 'RAW' | 'USER_ENTERED'
-    resource: any
-  }
-  interface paramsRead {
-    range: string
-    majorDimension: 'DIMENSION_UNSPECIFIED' | 'ROWS' | 'COLUMNS'
-  }
-
   return {
-    values: {
-      get: (props: paramsRead) => model.get({ spreadsheetId, ...props }),
-      update: (props: paramsWrite) => model.update({ spreadsheetId, ...props }),
-      append: (props: paramsWrite) => model.append({ spreadsheetId, ...props }),
-    },
+    get: (
+      range: string,
+      optins: sheets_v4.Params$Resource$Spreadsheets$Values$Get
+    ) => model.get({ spreadsheetId, range, ...optins }),
+    update: (
+      range: string,
+      optins: sheets_v4.Params$Resource$Spreadsheets$Values$Update
+    ) => model.update({ spreadsheetId, range, ...optins }),
+    append: (
+      range: string,
+      optins: sheets_v4.Params$Resource$Spreadsheets$Values$Append
+    ) => model.append({ spreadsheetId, range, ...optins }),
   }
 }
 

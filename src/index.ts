@@ -10,6 +10,7 @@ import http from 'http'
 import { compra, categoria } from './types'
 
 import { Spreadsheet } from './model'
+const SpreadsheetSetup = (async () => Spreadsheet())()
 
 // -- BOT
 const bot = new Telegraf(process.env.BOT_TOKEN || '')
@@ -40,21 +41,20 @@ bot.start(ctx => {
   )
 })
 
-bot.help(ctx => {
+bot.help(async ctx => {
   ctx.reply(
     'Para registrar uma compra basta enviar o valor da sua compra, logo em seguida será solicitado a categoria dela, clicando basta esperar o Ok que ocorreu tudo certo 😄'
   )
 
-  // Fins de testes
-  Spreadsheet()
-    .then(aaa =>
-      aaa.values.append({
-        range: 'TarefasFechadas',
-        valueInputOption: 'RAW',
-        resource: { values: [['foi pedida uma ajuda']] },
-      })
-    )
-    .catch(err => console.log(err))
+  const sheet = await SpreadsheetSetup
+  sheet.append('TarefasFechadas', {
+    valueInputOption: 'RAW',
+    requestBody: {
+      values: [['Agora com o model invocado MESMO antes do commit!!!']],
+    },
+  })
+  console.log('FOiiiiiiii')
+  console.log(sheet)
 })
 
 bot.command('categorias', ctx => {

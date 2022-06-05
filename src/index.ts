@@ -1,4 +1,4 @@
-import { Telegraf } from 'telegraf'
+import { Telegraf, Markup } from 'telegraf'
 import axios from 'axios'
 
 import * as dotenv from 'dotenv'
@@ -7,15 +7,13 @@ dotenv.config()
 import http from 'http'
 
 //types
-import { compra, categoria } from './types'
+import  from './types'
 
-import { Spreadsheet } from './model'
-const SpreadsheetSetup = (async () => Spreadsheet())()
 
 // -- BOT
 const bot = new Telegraf(process.env.BOT_TOKEN || '')
 
-let last_compra: compra = {}
+let last_compra:loan = {  }
 const CATEGORIAS_COMPRA: Array<categoria> = ['📚 Livro']
 
 async function APPEND_GOOGLE(body: compra) {
@@ -41,20 +39,66 @@ bot.start(ctx => {
   )
 })
 
+bot.command('teste', ctx => console.log('teste'))
+
+// bot.hears(/a$/, (ctx, next) => {
+// }).on('text', () => {}).on
+
+// bot.command('custom', ({ reply }) => {
+//     return reply('Custom buttons keyboard', {
+//         Markup.keyboard([
+//             ['🔍 Search', '😎 Popular'], // Row1 with 2 buttons
+//             ['☸ Setting', '📞 Feedback'], // Row2 with 2 buttons
+//             ['📢 Ads', '⭐️ Rate us', '👥 Share'] // Row3 with 3 buttons
+//         ]).oneTime().resize().extra()
+//     })
+// })
+//
+
+// Se for uma mensagem que terminar com 'opa'
+bot.hears(/opa$/, (ctx, next) => {
+  ctx.reply('Olha o opa, valeu :)')
+
+  ctx.replyWithHTML(
+    ` <b>Olá mundo</b> <code>print(ola mundo)</code>`,
+    // Markup.inlineKeyboard([Markup.callbackButton('Coke', 'Coke')])
+    Markup.keyboard(['Um', 'duas', 'antes do quatro'])
+  )
+
+  ctx.replyWithHTML(
+    ` <b>Olá mundo</b> <code>print(ola mundo)</code>`
+    // Markup.([{ text: 'dsad' }])
+  )
+
+  return next()
+
+  // Pools
+  ctx.replyWithPoll('Uma pergunta', ['pergunta 1', 'pergunta 2'])
+  ctx.telegram.sendPoll(
+    ctx.chat.id,
+    'Eae meu bom?',
+    ['Eae, qual a braba?', 'sei la']
+    // { correct_option_id: 0 } // ['Tudo de bia', 'mais ou  menois']
+  )
+  next()
+})
+
 bot.help(async ctx => {
   ctx.reply(
     'Para registrar uma compra basta enviar o valor da sua compra, logo em seguida será solicitado a categoria dela, clicando basta esperar o Ok que ocorreu tudo certo 😄'
   )
-
-  const sheet = await SpreadsheetSetup
-  sheet.append('TarefasFechadas', {
-    valueInputOption: 'RAW',
-    requestBody: {
-      values: [['Agora com o model invocado MESMO antes do commit!!!']],
-    },
+  bot.on('text', async () => {
+    console.log('Pega porra')
+    // const sheet = await SpreadsheetSetup
+    // sheet.append('TarefasFechadas', {
+    //   valueInputOption: 'RAW',
+    //   requestBody: {
+    //     values: [['dentro deu']],
+    //   },
+    // })
+    // console.log(sheet)
+    console.log('FOiiiiiiii')
   })
-  console.log('FOiiiiiiii')
-  console.log(sheet)
 })
 
 bot.command('categorias', ctx => {
